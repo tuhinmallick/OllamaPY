@@ -86,10 +86,10 @@ class Ollama:
             return
 
     # Show Model Information
-    def showModelInfo(self, model:str=None)->Union[dict, None]:
+    def showModelInfo(self, model:str=None) -> Union[dict, None]:
         """Show details about a model including modelfile, template, parameters, license and system prompt."""
         try:
-            if model == None:
+            if model is None:
                 model = self.model
             parameters = {'name':model}
             r = requests.post(f'{self.__baseUrl}/show', json=parameters)
@@ -134,21 +134,20 @@ class Ollama:
         return False
 
     # Pull a Model
-    def __pull(self)->bool:
+    def __pull(self) -> bool:
         """
         Pull a model onto the ollama server.
         """
         local = self.listLocalModels()
-        if local == None or self.model not in local:
-            try:
-                parameters = {'name':self.model}
-                requests.post(f'{self.__baseUrl}/pull', json=parameters)
-                return True
-            except:
-                print("Error: Could not connect to ollama server")
-                return False
-        else:
+        if local is not None and self.model in local:
             return True
+        try:
+            parameters = {'name':self.model}
+            requests.post(f'{self.__baseUrl}/pull', json=parameters)
+            return True
+        except:
+            print("Error: Could not connect to ollama server")
+            return False
 
     def setModel(self, model:str)->None:
         """
@@ -167,7 +166,7 @@ class Ollama:
         raise NotImplementedError
 
     # Generate Embeddings
-    def embeddings(self, prompt:str, model:str=None, options:dict[str,any]=None)->Union[str, None]:
+    def embeddings(self, prompt:str, model:str=None, options:dict[str,any]=None) -> Union[str, None]:
         """
         Generate embeddings for a prompt using a model.\n
         `prompt` : Text to generate embeddings for.\n
@@ -176,7 +175,7 @@ class Ollama:
         """
         if model != None:
             self.setModel(model)
-        if options == None:
+        if options is None:
             options = {}
         try:
             parameters = {'model':self.model, 'prompt':prompt, 'options':options}
